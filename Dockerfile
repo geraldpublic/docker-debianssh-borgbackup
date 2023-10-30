@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:bullseye
 
 LABEL version="2023-10-30"
 LABEL description="Debian latest for SSH with BorgBackup"
