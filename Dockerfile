@@ -1,6 +1,6 @@
 FROM debian:latest
 
-LABEL version="2023-06-09"
+LABEL version="2023-10-30"
 LABEL description="Debian latest for SSH with BorgBackup"
 
 #Install packages 
