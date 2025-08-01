@@ -1,6 +1,6 @@
 FROM debian:bullseye
 
-LABEL version="2025-06-28"
+LABEL version="2025-08-01"
 LABEL description="Debian latest for SSH with BorgBackup"
 
 #Install packages 
