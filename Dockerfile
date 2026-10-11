@@ -24,8 +24,7 @@ RUN useradd borgbackupmaster \
 	&& mkdir /home/borgbackupmaster/repos \
         && chown borgbackupmaster:borgbackupmaster /home/borgbackupmaster \
         && chown borgbackupmaster:borgbackupmaster /home/borgbackupmaster/repos \
-        && addgroup borgbackupmaster staff \
-        && addgroup borgbackupmaster sudo \
+        && usermod -aG staff,sudo borgbackupmaster \
         && true
 
 # Use SSH Default Port and change it outside
