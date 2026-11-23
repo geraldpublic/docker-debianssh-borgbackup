@@ -10,9 +10,13 @@ ADD ./debianssh/set_root_pw.sh /set_root_pw.sh
 ADD ./debianssh/run.sh /run.sh
 RUN chmod +x /*.sh
 
+# SSH host keys are not baked into the image; run.sh creates them in /etc/ssh/hostkeys (mount a volume to keep them)
 RUN mkdir -p /var/run/sshd && sed -i "s/#UsePrivilegeSeparation.*/UsePrivilegeSeparation yes/g" /etc/ssh/sshd_config \
   && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config \
   && sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config \
+  && rm -f /etc/ssh/ssh_host_* \
+  && mkdir -p /etc/ssh/hostkeys \
+  && printf 'HostKey /etc/ssh/hostkeys/ssh_host_ed25519_key\nHostKey /etc/ssh/hostkeys/ssh_host_ecdsa_key\nHostKey /etc/ssh/hostkeys/ssh_host_rsa_key\n' > /etc/ssh/sshd_config.d/hostkeys.conf \
   && touch /root/.Xauthority \
   && true
 
@@ -30,7 +34,7 @@ RUN useradd borgbackupmaster \
 # Use SSH Default Port and change it outside
 EXPOSE 22 
 
-VOLUME ["/home/borgbackupmaster/repos"]
+VOLUME ["/home/borgbackupmaster/repos", "/etc/ssh/hostkeys"]
 
 #Starting daemon
 CMD ["/run.sh"]

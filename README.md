@@ -7,6 +7,7 @@ A minimal Debian 13 (trixie) container with OpenSSH and [BorgBackup](https://www
 - **Source:** https://github.com/geraldpublic/docker-debianssh-borgbackup
 - **Port:** `22` (SSH)
 - **Repository volume:** `/home/borgbackupmaster/repos`
+- **Host key volume:** `/etc/ssh/hostkeys`
 - **Login user:** `borgbackupmaster` (limited account). Root login and password login are disabled.
 
 ## How it works
@@ -21,6 +22,7 @@ docker run -d \
     -p 222:22 \
     -e SSH_KEY="ssh-ed25519 AAAA... you@host" \
     -v /your/borg-repos:/home/borgbackupmaster/repos \
+    -v /your/hostkeys:/etc/ssh/hostkeys \
     gerald77/debian-ssh-borgbackup:latest
 ```
 
@@ -42,12 +44,17 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /your/borg-repos:/home/borgbackupmaster/repos
+      - /your/hostkeys:/etc/ssh/hostkeys
     environment:
       - TZ=Europe/Vienna
     env_file:
       - ./rsa_secret_pub.env
     restart: unless-stopped
 ```
+
+## SSH host keys
+
+The image contains no SSH host keys. On start `run.sh` creates missing keys (ed25519, ecdsa, rsa) in `/etc/ssh/hostkeys`. Mount a host directory there, so the keys survive image updates and clients do not see a changed host key. To keep existing keys, copy `ssh_host_*_key` (mode 600) and `ssh_host_*_key.pub` into that directory before the first start.
 
 ## Using it from a client
 
